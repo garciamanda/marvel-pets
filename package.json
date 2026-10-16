@@ -1,0 +1,46 @@
+{
+  "name": "marvel-pets",
+  "publisher": "amand",
+  "displayName": "Marvel Pets",
+  "description": "Extensão Marvel Pets para VS Code",
+  "version": "0.0.1",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:marvelPetsViewAmand2026XYZ"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "marvelPets.start",
+        "title": "Marvel: Iniciar Pet"
+      }
+    ],
+    "views": {
+      "explorer": [
+        {
+          "type": "webview",
+          "id": "marvelPetsViewAmand2026XYZ",
+          "name": "Marvel Pets",
+          "icon": "media/idle_1.png"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.80.0",
+    "typescript": "^5.4.0"
+  }
+}

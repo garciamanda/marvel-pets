@@ -1,0 +1,360 @@
+/* ============================================================
+   AJUSTE FACIL — toque apenas nas variáveis abaixo
+
+   Personagem:  --pet-size-min / --pet-size-ideal (vw) / --pet-size-max
+   Balão:       --bubble-max-w, --bubble-font, --bubble-pad,
+                --bubble-tail (cauda), --bubble-gap (folga acima da cabeça)
+
+   Teste visual: abra o webview, Ctrl+Shift+P -> "Developer: Open Webview
+   Developer Tools" -> Console -> __petDebug.forceTalk()
+   ============================================================ */
+:root {
+  --pet-size-min: 28px;
+  --pet-size-ideal: 7vw;
+  --pet-size-max: 44px;
+
+  --bubble-max-w: min(160px, 38%);
+  --bubble-font: clamp(9px, 1.8vw, 11px);
+  --bubble-pad: clamp(3px, 0.8vw, 5px);
+  --bubble-tail: clamp(10px, 2vw, 14px);
+  --bubble-gap: 12px;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+#game-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #0a0f24 0%, #141038 55%, #2b1550 100%);
+}
+
+#game-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 14%, #ffffff 50%, transparent 51%),
+    radial-gradient(1px 1px at 28% 7%, #ffffff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 44% 20%, #dfe6ff 50%, transparent 51%),
+    radial-gradient(1px 1px at 61% 10%, #ffffff 50%, transparent 51%),
+    radial-gradient(1px 1px at 74% 26%, #ffffff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 87% 13%, #dfe6ff 50%, transparent 51%),
+    radial-gradient(1px 1px at 8% 34%, #ffffff 50%, transparent 51%),
+    radial-gradient(1px 1px at 36% 38%, #ffffff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 66% 33%, #ffffff 50%, transparent 51%),
+    radial-gradient(1px 1px at 93% 40%, #ffffff 50%, transparent 51%);
+}
+
+.moon {
+  position: absolute;
+  top: 22px;
+  right: 34px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  z-index: 1;
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #ececf5 55%, #cfcfe0 100%);
+  box-shadow:
+    0 0 18px rgba(255, 255, 255, 0.6),
+    0 0 50px rgba(255, 255, 255, 0.28),
+    0 0 110px rgba(255, 255, 255, 0.14);
+}
+
+.skyline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 48px;
+  height: 44%;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 0 10px;
+}
+
+.building {
+  position: relative;
+  flex: 1;
+  border-top: 2px solid #2a2a40;
+  background-color: #12121d;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(18, 18, 29, 1) 0 10px, rgba(18, 18, 29, 0) 10px 22px),
+    repeating-linear-gradient(90deg, transparent 0 8px, #ffd966 8px 16px);
+}
+
+.building.b1 { height: 62%; background-color: #10101a; }
+.building.b2 { height: 88%; background-color: #14141f; }
+.building.b3 { height: 48%; background-color: #0f0f18; }
+.building.b4 { height: 74%; background-color: #131320; }
+.building.b5 { height: 56%; background-color: #11111c; }
+.building.b6 { height: 96%; background-color: #151522; }
+
+.antenna {
+  position: absolute;
+  top: -48px;
+  left: 24%;
+  width: 2px;
+  height: 48px;
+  background: #2f2f45;
+}
+
+.antenna::before,
+.antenna::after {
+  content: "";
+  position: absolute;
+  left: -7px;
+  width: 16px;
+  height: 2px;
+  background: #2f2f45;
+}
+
+.antenna::before { top: 10px; }
+.antenna::after { top: 20px; }
+
+.tank {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 24px;
+  border-radius: 5px 5px 3px 3px;
+  background: linear-gradient(180deg, #4a3d5e 0%, #3a2f4a 100%);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.12);
+}
+
+.tank::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  bottom: -7px;
+  height: 7px;
+  border-left: 2px solid #3a2f4a;
+  border-right: 2px solid #3a2f4a;
+}
+
+.roof {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 48px;
+  box-sizing: border-box;
+  z-index: 2;
+  border-top: 4px solid #9a9aa4;
+  background:
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.14) 0 2px, transparent 2px 64px),
+    linear-gradient(180deg, #7c7c86 0 6px, #5b5b65 6px, #47474f 55%, #3b3b43 100%);
+  box-shadow: 0 -8px 16px rgba(0, 0, 0, 0.5);
+}
+
+.web {
+  position: absolute;
+  top: 0;
+  width: 96px;
+  height: 96px;
+  z-index: 4;
+  pointer-events: none;
+  background-image:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0 1.5px, transparent 1.5px),
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.28) 0 1px, transparent 1px 14px),
+    repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.28) 0 1px, transparent 1px 14px);
+}
+
+.web-left {
+  left: 0;
+  -webkit-mask-image: linear-gradient(to bottom right, #000 20%, transparent 75%);
+  mask-image: linear-gradient(to bottom right, #000 20%, transparent 75%);
+}
+
+.web-right {
+  right: 0;
+  transform: scaleX(-1);
+  -webkit-mask-image: linear-gradient(to bottom right, #000 20%, transparent 75%);
+  mask-image: linear-gradient(to bottom right, #000 20%, transparent 75%);
+}
+
+#pet {
+  width: clamp(var(--pet-size-min), var(--pet-size-ideal), var(--pet-size-max));
+  height: auto;
+  aspect-ratio: 1 / 1;
+  position: absolute;
+  bottom: 48px;
+  left: 50%;
+  z-index: 3;
+  image-rendering: pixelated;
+  background-repeat: no-repeat;
+}
+
+#speech-bubble {
+  position: absolute;
+  bottom: calc(100% - 80px); /* fallback aprox. (telhado 48 + pet 44 + folga 12); o JS calcula o valor exato */
+  left: 50%;
+  z-index: 5;
+  max-width: var(--bubble-max-w);
+  padding: var(--bubble-pad);
+  box-sizing: border-box;
+  background: #ffffff;
+  color: #141038;
+  border: 2px solid #141038;
+  border-radius: 13px;
+  font-family: "Comic Sans MS", "Segoe UI", system-ui, sans-serif;
+  font-size: var(--bubble-font);
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  pointer-events: none;
+  /* estado base: SEMPRE visivel; so .is-hidden esconde */
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) scale(1);
+  box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.35);
+  /* transition so em opacity/transform — visibility NAO transiciona (evita estado "presa") */
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+#speech-bubble::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--bubble-tail) * -0.5);
+  margin-left: calc(var(--bubble-tail) * -0.5);
+  width: var(--bubble-tail);
+  height: var(--bubble-tail);
+  background: #ffffff;
+  border-right: 2px solid #141038;
+  border-bottom: 2px solid #141038;
+  transform: rotate(45deg);
+}
+
+/* balao deslocado para o lado: cauda vai para a borda mais proxima do pet.
+   rotate(45deg) eh mantido nos dois lados: com border-right+border-bottom
+   a cauda so aponta para BAIXO (cabeca do pet) com 45deg; -45deg apontaria
+   na horizontal, longe da cabeca. */
+#speech-bubble.bubble-center::before {
+  left: 50%;
+  right: auto;
+  margin-left: calc(var(--bubble-tail) * -0.5);
+  margin-right: 0;
+  transform: rotate(45deg);
+}
+
+#speech-bubble.bubble-left::before {
+  left: auto;
+  right: 20px;
+  margin-left: 0;
+  margin-right: calc(var(--bubble-tail) * -0.5);
+  transform: rotate(45deg);
+}
+
+#speech-bubble.bubble-right::before {
+  left: 20px;
+  margin-left: calc(var(--bubble-tail) * -0.5);
+  transform: rotate(45deg);
+}
+
+/* animacao de entrada: SEM opacity/visibility proprios (so a animacao),
+   fill-mode both garante o estado final (opacity 1) mesmo antes do 100% */
+#speech-bubble.is-visible {
+  animation: bubble-pop 0.2s ease-out both;
+}
+
+/* unico lugar que esconde o balao */
+#speech-bubble.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(6px) scale(0.85);
+  animation: none;
+}
+
+/* modo debug visual (__petDebug.toggleDebug()) */
+#speech-bubble.debug-outline {
+  outline: 2px dashed #ff2d95;
+  outline-offset: 2px;
+}
+
+#speech-bubble.debug-outline::before {
+  outline: 2px dashed #2dd4ff;
+  outline-offset: 1px;
+}
+
+#game-container.debug-guides::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none;
+  border: 2px dashed rgba(255, 45, 149, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(45, 212, 255, 0.35);
+}
+
+@keyframes bubble-pop {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(6px) scale(0.7);
+  }
+  70% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 300px) {
+  :root {
+    --pet-size-min: 23px;
+    --pet-size-ideal: 8vw;
+    --pet-size-max: 30px;
+    --bubble-max-w: min(140px, 55%);
+    --bubble-font: clamp(8px, 3vw, 10px);
+    --bubble-pad: 2px 4px;
+    --bubble-tail: 10px;
+    --bubble-gap: 8px;
+  }
+
+  #speech-bubble {
+    border-width: 1px;
+    border-radius: 9px;
+    line-height: 1.15;
+    box-shadow: 1px 2px 0 rgba(0, 0, 0, 0.35);
+  }
+
+  #pet {
+    bottom: 36px;
+  }
+
+  .roof {
+    height: 36px;
+  }
+
+  .skyline {
+    bottom: 36px;
+    height: 38%;
+  }
+
+  .moon {
+    width: 40px;
+    height: 40px;
+    top: 12px;
+    right: 16px;
+  }
+}

@@ -1,0 +1,18 @@
+# Dependências
+node_modules/
+
+# Artefatos de compilação TypeScript
+out/
+*.js.map
+
+# Pacote da extensão
+*.vsix
+
+# Testes de extensão
+.vscode-test/
+
+# Logs e temporários
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
